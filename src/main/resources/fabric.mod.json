@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "cobbledjobsfabric",
+  "version": "1.0.0",
+  "name": "CobbledJobsFabric",
+  "description": "Adds a jobs system for Cobblemon Fabric hooking into Impactor",
+  "authors": [
+    "Winglet"
+  ],
+  "contact": {
+    "repo": "https://github.com/adainish/CobbledJobsFabric"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/CobbledJobsFabric/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "io.github.adainish.cobbledjobsfabric.CobbledJobsFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.18",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}
