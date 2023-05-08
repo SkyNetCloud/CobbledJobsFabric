@@ -25,11 +25,14 @@ public class JobManager
         {
             for (DefaultJobs defaultJob:DefaultJobs.values()) {
                 ConfigurableJob configurableJob = new ConfigurableJob();
+                configurableJob.id = defaultJob.name().toLowerCase();
+                configurableJob.prettyName = "&b" + defaultJob.name();
                 configurableJob.enabled = true;
                 switch (defaultJob)
                 {
                     case Miner -> {
                         JobType jobType = new JobType();
+                        jobType.prettyTitle = "&b" + "Mine";
                         //load default action keys
                         for (int i = 0; i < 6; i++) {
                             ActionKey actionKey = new ActionKey();
@@ -66,15 +69,19 @@ public class JobManager
                                 }
 
                             }
+                            actionKey.prettyString = actionKey.actionKey
+                                    .replace("cobblemon:", "")
+                                            .replace("minecraft:", "")
+                                                    .replace("_", " ");
                             jobType.actionKeys.put(actionKey.actionKey, actionKey);
                         }
-                        configurableJob.jobTypes.put(JobAction.Mine.name(), jobType);
+                        configurableJob.jobTypes.put(JobAction.Mine.name().toLowerCase(), jobType);
                         break;
                     }
                     case Hunter -> {
                         JobType jobType = new JobType();
                         //load default action keys
-
+                        jobType.prettyTitle = "&bMob " + defaultJob.name();
                         //vanilla entities
                         for (int i = 0; i < 6; i++) {
                             ActionKey actionKey = new ActionKey();
@@ -153,12 +160,13 @@ public class JobManager
                             }
                             jobType.actionKeys.put(actionKey.actionKey, actionKey);
                         }
-                        configurableJob.jobTypes.put(JobAction.Kill.name(), jobType);
+                        configurableJob.jobTypes.put(JobAction.Kill.name().toLowerCase(), jobType);
                         break;
                     }
                     case Crafter -> {
                         JobType jobType = new JobType();
                         //load default action keys
+                        jobType.prettyTitle = "&b" + defaultJob.name();
                         for (int i = 0; i < 6; i++) {
                             ActionKey actionKey = new ActionKey();
                             actionKey.baseExperience = 1;
@@ -196,13 +204,14 @@ public class JobManager
                             }
                             jobType.actionKeys.put(actionKey.actionKey, actionKey);
                         }
-                        configurableJob.jobTypes.put(JobAction.Craft.name(), jobType);
+                        configurableJob.jobTypes.put(JobAction.Craft.name().toLowerCase(), jobType);
                         break;
                     }
                     case Collector -> {
                         JobType jobType = new JobType();
+                        jobType.prettyTitle = "&b" + "Capture Pokemon";
                         JobType secondJobType = new JobType();
-
+                        secondJobType.prettyTitle = "&b" + "Evolve Pokemon";
                         //load default action keys
                         for (int i = 0; i < 6; i++) {
                             ActionKey actionKey = new ActionKey();
@@ -280,14 +289,15 @@ public class JobManager
                             jobType.actionKeys.put(actionKey.actionKey, actionKey);
                         }
 
-                        configurableJob.jobTypes.put(JobAction.Capture.name(), jobType);
-                        configurableJob.jobTypes.put(JobAction.Evolve.name(), secondJobType);
+                        configurableJob.jobTypes.put(JobAction.Capture.name().toLowerCase(), jobType);
+                        configurableJob.jobTypes.put(JobAction.Evolve.name().toLowerCase(), secondJobType);
                         break;
                     }
                     case Fisherman -> {
                         JobType jobType = new JobType();
+                        jobType.prettyTitle = "&b" + "Fish Items";
                         JobType secondaryJobType = new JobType();
-
+                        secondaryJobType.prettyTitle = "&b" + "Fish Pokemon";
                         //load default action keys
 
                         //vanilla entities
@@ -407,12 +417,13 @@ public class JobManager
                             }
                             secondaryJobType.actionKeys.put(actionKey.actionKey, actionKey);
                         }
-                        configurableJob.jobTypes.put(JobAction.Fish.name(), jobType);
-                        configurableJob.jobTypes.put(JobAction.Kill.name(), secondaryJobType);
+                        configurableJob.jobTypes.put(JobAction.Fish.name().toLowerCase(), jobType);
+                        configurableJob.jobTypes.put(JobAction.Kill.name().toLowerCase(), secondaryJobType);
                         break;
                     }
                     case Woodcutter -> {
                         JobType jobType = new JobType();
+                        jobType.prettyTitle = "&b" + "Cut Wood";
                         //load default action keys
                         for (int i = 0; i < 6; i++) {
                             ActionKey actionKey = new ActionKey();
@@ -451,7 +462,7 @@ public class JobManager
                             }
                             jobType.actionKeys.put(actionKey.actionKey, actionKey);
                         }
-                        configurableJob.jobTypes.put(JobAction.Mine.name(), jobType);
+                        configurableJob.jobTypes.put(JobAction.Mine.name().toLowerCase(), jobType);
                         break;
                     }
                 }
@@ -463,7 +474,7 @@ public class JobManager
                     configurableJob.levels.put(i, configurableLevel);
                 }
 
-                configurableJobs.put(defaultJob.name(), configurableJob);
+                configurableJobs.put(configurableJob.id, configurableJob);
             }
         }
     }

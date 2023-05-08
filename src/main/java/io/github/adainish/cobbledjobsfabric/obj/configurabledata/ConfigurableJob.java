@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ConfigurableJob
 {
+    public String id = "";
     public int displayOrder = 0;
     public ItemStack displayStack = new ItemStack(Items.DIRT);
     public HashMap<String, JobType> jobTypes = new HashMap<>();

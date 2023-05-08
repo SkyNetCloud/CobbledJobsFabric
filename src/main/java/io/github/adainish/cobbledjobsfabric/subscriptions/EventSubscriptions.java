@@ -89,6 +89,7 @@ public class EventSubscriptions
             }
 
             if (player != null) {
+                player.userName = event.getName().plainCopy().toString();
                 player.syncWithJobManager();
                 player.updateCache();
             }

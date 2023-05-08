@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Player {
@@ -60,6 +61,11 @@ public class Player {
         UIManager.openUIForcefully(serverPlayer, mainJobsGUI());
     }
 
+    public boolean jobsMaxedOut()
+    {
+        return getCurrentActiveJobCount() >= maxJobs;
+    }
+
     public int getCurrentActiveJobCount() {
         AtomicInteger amount = new AtomicInteger();
         jobs.forEach((s, job) -> {
@@ -80,6 +86,21 @@ public class Player {
         if (configurableJob.levels.containsKey(getCurrentLevelForJob(job)))
             return configurableJob.levels.get(getCurrentLevelForJob(job));
         return null;
+    }
+
+    public boolean isJob(ConfigurableJob configurableJob, Job job)
+    {
+        return (job.jobName.equals(configurableJob.id));
+    }
+
+    public boolean inJob(ConfigurableJob configurableJob)
+    {
+        for (Job job : jobs.values()) {
+            if (job.jobName.equals(configurableJob.id)) {
+                return job.hasJob;
+            }
+        }
+        return false;
     }
 
     public double retrieveExperience(Job job, ConfigurableJob configurableJob, String jobTypeID, String actionKeyID) {
@@ -113,6 +134,8 @@ public class Player {
                     configurableJob.jobTypes.forEach((s1, jobType) -> {
                         if (s1.equalsIgnoreCase(jobAction.name())) {
                             if (jobType.actionKeys.containsKey(actionKeyID)) {
+                                if (!job.hasJob)
+                                    return;
                                 double exp = retrieveExperience(job, configurableJob, s1, actionKeyID);
                                 //increase exp
                                 job.increaseExperience(exp);
@@ -134,6 +157,33 @@ public class Player {
                 }
             }
         });
+    }
+
+    public void updateJobStatus(ConfigurableJob configurableJob)
+    {
+        AtomicBoolean statusBool = new AtomicBoolean(true);
+        for (Job job : jobs.values()) {
+            if (isJob(configurableJob, job)) {
+                if (!job.hasJob) {
+                    if (jobsMaxedOut()) {
+                        sendMessage("&cYou've already maxed out your job count....");
+                        return;
+                    }
+                    job.hasJob = true;
+                    statusBool.set(true);
+                } else {
+                    statusBool.set(false);
+                    job.hasJob = false;
+                }
+            }
+        }
+        String status = "&ajoined";
+        if (!statusBool.get())
+            status = "&cleft";
+        sendMessage("&7You %status% %job%."
+                .replace("%status%", status)
+                .replace("%job%", configurableJob.prettyName)
+        );
     }
 
     public void syncWithJobManager() {
@@ -211,7 +261,7 @@ public class Player {
             ResourceLocation location = ResourceLocation.tryParse(actionKey.actionKey);
             if (location == null)
                 continue;
-            ItemStack stack = new ItemStack(Items.AIR);
+            ItemStack stack = new ItemStack(Items.DIRT);
             if (PokemonSpecies.INSTANCE.getByIdentifier(location) != null)
             {
                 stack = Util.returnIcon(PokemonSpecies.INSTANCE.getByIdentifier(location).create(1));
@@ -222,6 +272,7 @@ public class Player {
                 continue;
 
             GooeyButton button = GooeyButton.builder()
+                    .display(stack)
                     .title(Util.formattedString(actionKey.prettyString))
                     .lore(Util.formattedArrayList(parsedActionKeyString(actionKey)))
                     .build();
@@ -241,7 +292,7 @@ public class Player {
                     .lore(Util.formattedArrayList(jobType.description))
                     .display(jobType.displayStack.copy())
                     .onClick(b -> {
-
+                        UIManager.openUIForcefully(b.getPlayer(), jobActionKeyScrollableInfoMenu(configurableJob, jobType));
                     })
                     .build();
 
@@ -255,23 +306,36 @@ public class Player {
     {
         ChestTemplate.Builder builder = ChestTemplate.builder(5);
         builder.fill(filler());
-
+        boolean inJob = inJob(configurableJob);
         ItemStack joinOrLeaveStack = new ItemStack(Items.ENDER_PEARL);
-
-
+        List<String> joinOrLeaveLore = new ArrayList<>(Arrays.asList("&aClick to join this job", "&7----> &r&7Joining this job gives money when completing actions!"));
+        String joinOrLeaveTitle = "&aJoin job";
+        if (inJob) {
+            joinOrLeaveTitle = "&eActive Job";
+            joinOrLeaveLore = new ArrayList<>(Arrays.asList("&cClick to leave this job", "&7----> &r&7You will no longer receive money for doing the jobs tasks", "&7but you'll be able to join other jobs if you're at max capacity!"));
+            joinOrLeaveStack = new ItemStack(Items.ALLIUM);
+        } else if (jobsMaxedOut())
+        {
+            joinOrLeaveTitle = "&4Max Jobs reached!";
+            joinOrLeaveLore = new ArrayList<>(Arrays.asList("&7-----> &r&bYou've already maxed out your jobs!", "&7&m| &r&eYou'll need to leave a job before joining this one!"));
+            joinOrLeaveStack = new ItemStack(Items.TNT);
+        }
         GooeyButton joinOrLeave = GooeyButton.builder()
-                .title(Util.formattedString("&a"))
-                .display(new ItemStack(Items.ENDER_CHEST))
+                .title(Util.formattedString(joinOrLeaveTitle))
+                .display(joinOrLeaveStack)
+                .lore(Util.formattedArrayList(joinOrLeaveLore))
                 .onClick(b -> {
-                    //if join bla bla
-
-                     //if leave bla bla
+                    updateJobStatus(configurableJob);
+                    UIManager.openUIForcefully(b.getPlayer(), jobActionMenu(configurableJob));
                 })
                 .build();
 
         GooeyButton back = GooeyButton.builder()
                 .title(Util.formattedString("&3Go Back"))
                 .display(new ItemStack(Items.ARROW))
+                .onClick(b -> {
+                    UIManager.openUIForcefully(b.getPlayer(), selectOptionMenu(configurableJob));
+                })
                 .build();
 
         builder.set(2, 3, back);
@@ -283,11 +347,20 @@ public class Player {
     {
         ChestTemplate.Builder builder = ChestTemplate.builder(5);
         builder.fill(filler());
+
+        GooeyButton back = GooeyButton.builder()
+                .title(Util.formattedString("&3Go Back"))
+                .display(new ItemStack(Items.ARROW))
+                .onClick(b -> {
+                    UIManager.openUIForcefully(b.getPlayer(), mainJobsGUI());
+                })
+                .build();
+
         GooeyButton viewJobInfo = GooeyButton.builder()
                 .title(Util.formattedString("&aJob Info"))
                 .display(new ItemStack(Items.ENDER_CHEST))
                 .onClick(b -> {
-
+                    UIManager.openUIForcefully(b.getPlayer(), jobActionScrollableInfoMenu(configurableJob));
                 })
                 .build();
 
@@ -299,10 +372,79 @@ public class Player {
                 })
                 .build();
 
-        builder.set(2, 3, joinOption);
-        builder.set(2, 5, viewJobInfo);
+        builder.set(2, 2, back);
+        builder.set(2, 4, joinOption);
+        builder.set(2, 6, viewJobInfo);
         return GooeyPage.builder().template(builder.build()).build();
     }
+
+    public LinkedPage jobActionScrollableInfoMenu(ConfigurableJob configurableJob)
+    {
+        ChestTemplate.Builder builder = ChestTemplate.builder(5);
+        builder.fill(filler());
+
+        PlaceholderButton placeHolderButton = new PlaceholderButton();
+        LinkedPageButton previous = LinkedPageButton.builder()
+                .display(new ItemStack(Items.SPECTRAL_ARROW))
+                .title(Util.formattedString("Previous Page"))
+                .linkType(LinkType.Previous)
+                .build();
+
+        LinkedPageButton next = LinkedPageButton.builder()
+                .display(new ItemStack(Items.SPECTRAL_ARROW))
+                .title(Util.formattedString("Next Page"))
+                .linkType(LinkType.Next)
+                .build();
+
+        GooeyButton back = GooeyButton.builder()
+                .title(Util.formattedString("&3Go Back"))
+                .display(new ItemStack(Items.ARROW))
+                .onClick(b -> {
+                    UIManager.openUIForcefully(b.getPlayer(), selectOptionMenu(configurableJob));
+                })
+                .build();
+
+        builder.set(0, 3, previous)
+                .set(0, 4, back)
+                .set(0, 5, next)
+                .rectangle(1, 1, 3, 7, placeHolderButton);
+
+        return PaginationHelper.createPagesFromPlaceholders(builder.build(), sortedActionButtons(configurableJob), LinkedPage.builder().template(builder.build()));
+    }
+
+    public LinkedPage jobActionKeyScrollableInfoMenu(ConfigurableJob configurableJob, JobType jobType)
+    {
+        ChestTemplate.Builder builder = ChestTemplate.builder(5);
+        builder.fill(filler());
+
+        PlaceholderButton placeHolderButton = new PlaceholderButton();
+        LinkedPageButton previous = LinkedPageButton.builder()
+                .display(new ItemStack(Items.SPECTRAL_ARROW))
+                .title(Util.formattedString("Previous Page"))
+                .linkType(LinkType.Previous)
+                .build();
+
+        LinkedPageButton next = LinkedPageButton.builder()
+                .display(new ItemStack(Items.SPECTRAL_ARROW))
+                .title(Util.formattedString("Next Page"))
+                .linkType(LinkType.Next)
+                .build();
+
+        GooeyButton back = GooeyButton.builder()
+                .title(Util.formattedString("&3Go Back"))
+                .display(new ItemStack(Items.ARROW))
+                .onClick(b -> {
+                    UIManager.openUIForcefully(b.getPlayer(), jobActionScrollableInfoMenu(configurableJob));
+                })
+                .build();
+        builder.set(0, 3, previous)
+                .set(0, 4, back)
+                .set(0, 5, next)
+                .rectangle(1, 1, 3, 7, placeHolderButton);
+
+        return PaginationHelper.createPagesFromPlaceholders(builder.build(), sortedActionKeys(jobType), LinkedPage.builder().template(builder.build()));
+    }
+
 
     public LinkedPage mainJobsGUI() {
         ChestTemplate.Builder builder = ChestTemplate.builder(5);
