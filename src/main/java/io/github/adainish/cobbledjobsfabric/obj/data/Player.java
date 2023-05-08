@@ -126,7 +126,7 @@ public class Player {
                                 //if can level up, level up
                                 if (job.canLevelUp()) {
                                     job.increaseLevel();
-                                    sendMessage("&7You level up your %job% to %level%.");
+                                    sendMessage("&7You leveled up your %job% to %level%.");
                                 }
                             }
                         }
