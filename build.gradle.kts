@@ -25,10 +25,6 @@ repositories {
     mavenCentral()
     maven(url = "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
     maven("https://maven.impactdev.net/repository/development/")
-    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-        name = "sonatype-oss-snapshots1"
-        mavenContent { snapshotsOnly() }
-    }
 }
 
 dependencies {
@@ -39,10 +35,11 @@ dependencies {
     //modImplementation(fabricApi.module("fabric-command-api-v2", "0.92.0+1.19.2"))
     modImplementation("dev.architectury", "architectury-fabric", "9.2.14")
 
-    modImplementation("ca.landonjw.gooeylibs:api:3.0.0-1.20.1-SNAPSHOT")
+
     modImplementation("com.cobblemon:mod:1.4.1+1.20.1-SNAPSHOT")
-    implementation("net.impactdev.impactor.api:economy:5.1.1-SNAPSHOT")
-    implementation("net.impactdev.impactor.api:core:5.1.1-SNAPSHOT")
+
+    modImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    implementation(fileTree(mapOf("dir" to "impactor", "include" to listOf("*.jar"))))
 
     implementation("net.kyori:adventure-api:4.14.0")
 
