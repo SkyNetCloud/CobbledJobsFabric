@@ -8,12 +8,12 @@ import net.minecraft.core.registries.BuiltInRegistries.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.HashMap;
 import java.util.Objects;
 
-import static net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE;
-import static net.minecraft.core.registries.BuiltInRegistries.ITEM;
+import static net.minecraft.core.registries.BuiltInRegistries.*;
 
 public class JobManager
 {
@@ -442,17 +442,17 @@ public class JobManager
                                     break;
                                 }
                                 case 1 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.BIRCH_LOG);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 2 -> {
                                     ResourceLocation location = ITEM.getKey(Items.OAK_LOG);
                                     actionKey.actionKey = location.toString().toLowerCase();
                                     break;
                                 }
-                                case 3 -> {
+                                case 2 -> {
                                     ResourceLocation location = ITEM.getKey(Items.DARK_OAK_LOG);
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                    break;
+                                }
+                                case 3 -> {
+                                    ResourceLocation location = ITEM.getKey(Items.SPRUCE_LOG);
                                     actionKey.actionKey = location.toString().toLowerCase();
                                 }
                                 case 4 -> {
@@ -460,7 +460,7 @@ public class JobManager
                                     actionKey.actionKey = location.toString().toLowerCase();
                                 }
                                 case 5 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.SPRUCE_LOG);
+                                    ResourceLocation location = ITEM.getKey(Items.BIRCH_LOG);
                                     actionKey.actionKey = location.toString().toLowerCase();
                                 }
 

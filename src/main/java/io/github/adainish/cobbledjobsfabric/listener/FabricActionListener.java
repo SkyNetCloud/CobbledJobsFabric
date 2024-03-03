@@ -1,7 +1,10 @@
 package io.github.adainish.cobbledjobsfabric.listener;
 
+import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import dev.architectury.event.events.common.PlayerEvent;
+import io.github.adainish.cobbledjobsfabric.CobbledJobsFabric;
+import io.github.adainish.cobbledjobsfabric.config.LanguageConfig;
 import io.github.adainish.cobbledjobsfabric.enumerations.JobAction;
 import io.github.adainish.cobbledjobsfabric.obj.data.Player;
 import io.github.adainish.cobbledjobsfabric.storage.PlayerStorage;
@@ -27,26 +30,6 @@ public class FabricActionListener
     public void registerFishing()
     {
 
-//        Bobb
-//        PlayerEvent.B.register((serverPlayer, constructed, inventory) -> {
-//            if (constructed == null)
-//                return;
-//
-//            if (constructed.isEmpty())
-//                return;
-//            try {
-//                Player player = PlayerStorage.getPlayer(serverPlayer.getUUID());
-//                if (player != null) {
-//                    //update job data for mining
-//
-//                    Optional<RegistryKey<Item>> location = BuiltInRegistries.ITEM.getKey(constructed.getItem());
-//                    player.updateJobData(JobAction.Craft, location.toString());
-//                    player.updateCache();
-//                }
-//            } catch (Exception e) {
-//
-//            }
-//        });
     }
 
     public void registerCrafting()

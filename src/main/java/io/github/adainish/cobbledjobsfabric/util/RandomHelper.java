@@ -1,7 +1,7 @@
 package io.github.adainish.cobbledjobsfabric.util;
 
 import com.google.common.collect.Sets;
-import org.spongepowered.math.vector.Vector3d;
+import net.impactdev.impactor.relocations.org.spongepowered.math.vector.Vector3d;
 
 import java.awt.*;
 import java.util.*;

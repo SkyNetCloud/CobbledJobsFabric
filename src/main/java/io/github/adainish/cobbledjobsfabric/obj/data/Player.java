@@ -12,6 +12,7 @@ import ca.landonjw.gooeylibs2.api.page.LinkedPage;
 import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate;
 import com.cobblemon.mod.common.api.pokemon.PokemonSpecies;
 import io.github.adainish.cobbledjobsfabric.CobbledJobsFabric;
+import io.github.adainish.cobbledjobsfabric.config.LanguageConfig;
 import io.github.adainish.cobbledjobsfabric.enumerations.JobAction;
 import io.github.adainish.cobbledjobsfabric.obj.configurabledata.ActionKey;
 import io.github.adainish.cobbledjobsfabric.obj.configurabledata.ConfigurableJob;
@@ -21,12 +22,14 @@ import io.github.adainish.cobbledjobsfabric.storage.PlayerStorage;
 import io.github.adainish.cobbledjobsfabric.util.EconomyUtil;
 import io.github.adainish.cobbledjobsfabric.util.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -220,6 +223,9 @@ public class Player {
                 .build();
     }
 
+
+
+
     public List<Button> sortedJobsButtons() {
         List<Button> buttons = new ArrayList<>();
         List<ConfigurableJob> configurableJobs = new ArrayList<>(CobbledJobsFabric.jobsConfig.jobManager.configurableJobs.values());
@@ -227,9 +233,9 @@ public class Player {
 
         for (ConfigurableJob configurableJob : configurableJobs) {
             GooeyButton button = GooeyButton.builder()
+                    .display(new ItemStack(Util.parseItemId(configurableJob.displayStack).getItem()))
                     .title(Util.formattedString(configurableJob.prettyName))
                     .lore(Util.formattedArrayList(configurableJob.description))
-                    .display(configurableJob.displayStack)
                     .onClick(b -> {
                         UIManager.openUIForcefully(b.getPlayer(), selectOptionMenu(configurableJob));
                     })
@@ -263,7 +269,7 @@ public class Player {
             ResourceLocation location = ResourceLocation.tryParse(actionKey.actionKey);
             if (location == null)
                 continue;
-            ItemStack stack = new ItemStack(Items.DIRT);
+            ItemStack stack = new ItemStack(Items.DIRT.asItem());
             if (PokemonSpecies.INSTANCE.getByIdentifier(location) != null)
             {
                 stack = Util.returnIcon(Objects.requireNonNull(PokemonSpecies.INSTANCE.getByIdentifier(location)).create(1));
@@ -274,7 +280,7 @@ public class Player {
                 continue;
 
             GooeyButton button = GooeyButton.builder()
-                    .display(stack)
+                    .display(stack.copy())
                     .title(Util.formattedString(actionKey.prettyString))
                     .lore(Util.formattedArrayList(parsedActionKeyString(actionKey)))
                     .build();
@@ -292,7 +298,7 @@ public class Player {
             GooeyButton button = GooeyButton.builder()
                     .title(Util.formattedString(jobType.prettyTitle))
                     .lore(Util.formattedArrayList(jobType.description))
-                    .display(jobType.displayStack.copy())
+                    .display(new ItemStack(Util.parseItemId(jobType.displayStack).getItem()))
                     .onClick(b -> {
                         UIManager.openUIForcefully(b.getPlayer(), jobActionKeyScrollableInfoMenu(configurableJob, jobType));
                     })

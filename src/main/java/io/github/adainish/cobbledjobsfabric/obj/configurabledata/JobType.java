@@ -11,9 +11,12 @@ import java.util.List;
 public class JobType
 {
     public HashMap<String, ActionKey> actionKeys = new HashMap<>();
+
+    public static String displayStack = "minecraft:dirt";
     public String prettyTitle = "";
     public List<String> description = new ArrayList<>();
-    public ItemStack displayStack = new ItemStack(Items.DIRT);
+
+
     public int displayOrder = 0;
     public JobType()
     {

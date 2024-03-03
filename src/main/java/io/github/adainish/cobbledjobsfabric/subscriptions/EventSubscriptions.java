@@ -8,11 +8,12 @@ import io.github.adainish.cobbledjobsfabric.obj.data.Player;
 import io.github.adainish.cobbledjobsfabric.storage.PlayerStorage;
 import kotlin.Unit;
 
+import java.util.Objects;
+
 
 public class EventSubscriptions {
 
     public EventSubscriptions() {
-
         subscribeToPlayerLogin();
         subscribeToPlayerLogout();
         subscribeToCapture();
@@ -40,17 +41,16 @@ public class EventSubscriptions {
 
     public void subscribeToFainting() {
         CobblemonEvents.POKEMON_FAINTED.subscribe(Priority.NORMAL, event -> {
-            try {
-                Player player = PlayerStorage.getPlayer(event.component1().getOwnerPlayer().getUUID());
-                if (player != null) {
-                    //update job data for killing
-                    player.updateJobData(JobAction.Kill, event.component1().getSpecies().resourceIdentifier.toString());
-                    player.updateCache();
+                try {
+                    Player player = PlayerStorage.getPlayer(Objects.requireNonNull(event.component1().getOwnerPlayer()).getUUID());
+                    if (player != null && event.getPokemon().isWild()) {
+                        //update job data for killing
+                        player.updateJobData(JobAction.Kill, event.component1().getSpecies().resourceIdentifier.toString());
+                        player.updateCache();
+                    }
+                } catch (Exception e) {
+                    return Unit.INSTANCE;
                 }
-            } catch (Exception e) {
-                return Unit.INSTANCE;
-            }
-
             return Unit.INSTANCE;
         });
 
