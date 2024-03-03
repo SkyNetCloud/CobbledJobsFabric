@@ -2,7 +2,9 @@ package io.github.adainish.cobbledjobsfabric;
 
 import ca.landonjw.gooeylibs2.api.tasks.Task;
 import com.cobblemon.mod.common.api.Priority;
-import com.cobblemon.mod.common.api.events.CobblemonEvents;
+import com.cobblemon.mod.common.platform.events.PlatformEvents;
+import com.cobblemon.mod.common.platform.events.ServerEvent;
+import dev.architectury.event.events.common.CommandRegistrationEvent;
 import io.github.adainish.cobbledjobsfabric.cmd.Command;
 import io.github.adainish.cobbledjobsfabric.config.JobsConfig;
 import io.github.adainish.cobbledjobsfabric.config.LanguageConfig;
@@ -31,7 +33,7 @@ public class CobbledJobsFabric implements ModInitializer {
     private static File configDir;
     private static File storage;
     private static File playerStorageDir;
-    private static MinecraftServer server;
+    private static MinecraftServer server = null;
     public static JobsConfig jobsConfig;
     public static LanguageConfig languageConfig;
     public static DataWrapper dataWrapper;
@@ -87,8 +89,10 @@ public class CobbledJobsFabric implements ModInitializer {
                 .replace("%y", YEAR)
         );
         //do data set up
-        CobblemonEvents.SERVER_STARTED.subscribe(Priority.NORMAL, minecraftServer -> {
-            setServer(minecraftServer);
+
+
+        PlatformEvents.SERVER_STARTED.subscribe(Priority.NORMAL, minecraftServer -> {
+            setServer(minecraftServer.getServer());
             //init subscriptions
             eventSubscriptions = new EventSubscriptions();
             //register fabric events
@@ -96,12 +100,11 @@ public class CobbledJobsFabric implements ModInitializer {
             dataWrapper = new DataWrapper();
             reload();
             Task.builder().execute(new PlayerDataTask()).infinite().interval((20 * 60) * 30).build();
+
             return Unit.INSTANCE;
         });
 
-
-
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+        CommandRegistrationEvent.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(Command.getCommand());
         });
     }
@@ -115,8 +118,6 @@ public class CobbledJobsFabric implements ModInitializer {
         getPlayerStorageDir().mkdirs();
     }
 
-
-
     public void initConfigs() {
         log.warn("Loading Config Files");
         JobsConfig.writeConfig();
@@ -128,6 +129,5 @@ public class CobbledJobsFabric implements ModInitializer {
     public void reload() {
         initDirs();
         initConfigs();
-
     }
 }

@@ -2,16 +2,16 @@ package io.github.adainish.cobbledjobsfabric.subscriptions;
 
 import com.cobblemon.mod.common.api.Priority;
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
+import com.cobblemon.mod.common.platform.events.PlatformEvents;
 import io.github.adainish.cobbledjobsfabric.enumerations.JobAction;
 import io.github.adainish.cobbledjobsfabric.obj.data.Player;
 import io.github.adainish.cobbledjobsfabric.storage.PlayerStorage;
 import kotlin.Unit;
 
-public class EventSubscriptions
-{
 
-    public EventSubscriptions()
-    {
+public class EventSubscriptions {
+
+    public EventSubscriptions() {
 
         subscribeToPlayerLogin();
         subscribeToPlayerLogout();
@@ -20,19 +20,16 @@ public class EventSubscriptions
         subscribeToEvolving();
     }
 
-    public void subscribeToEvolving()
-    {
+    public void subscribeToEvolving() {
         CobblemonEvents.EVOLUTION_COMPLETE.subscribe(Priority.NORMAL, event -> {
             try {
                 Player player = PlayerStorage.getPlayer(event.component1().getOwnerPlayer().getUUID());
-                if (player != null)
-                {
+                if (player != null) {
                     //update job data for evolving
                     player.updateJobData(JobAction.Evolve, event.component1().getSpecies().resourceIdentifier.toString());
                     player.updateCache();
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 return Unit.INSTANCE;
             }
 
@@ -41,19 +38,16 @@ public class EventSubscriptions
 
     }
 
-    public void subscribeToFainting()
-    {
+    public void subscribeToFainting() {
         CobblemonEvents.POKEMON_FAINTED.subscribe(Priority.NORMAL, event -> {
             try {
                 Player player = PlayerStorage.getPlayer(event.component1().getOwnerPlayer().getUUID());
-                if (player != null)
-                {
+                if (player != null) {
                     //update job data for killing
                     player.updateJobData(JobAction.Kill, event.component1().getSpecies().resourceIdentifier.toString());
                     player.updateCache();
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 return Unit.INSTANCE;
             }
 
@@ -62,34 +56,29 @@ public class EventSubscriptions
 
     }
 
-    public void subscribeToCapture()
-    {
+    public void subscribeToCapture() {
         CobblemonEvents.POKEMON_CAPTURED.subscribe(Priority.NORMAL, event -> {
             Player player = PlayerStorage.getPlayer(event.getPlayer().getUUID());
-            if (player != null)
-            {
+            if (player != null) {
                 //update job data for capturing
                 player.updateJobData(JobAction.Capture, event.component1().getSpecies().resourceIdentifier.toString());
                 player.updateCache();
             }
             return Unit.INSTANCE;
         });
-
     }
 
-    public void subscribeToPlayerLogin()
-    {
-        CobblemonEvents.PLAYER_JOIN.subscribe(Priority.NORMAL, event -> {
+    public void subscribeToPlayerLogin() {
+        PlatformEvents.SERVER_PLAYER_LOGIN.subscribe(Priority.NORMAL, e -> {
 
-
-            Player player = PlayerStorage.getPlayer(event.getUUID());
+            Player player = PlayerStorage.getPlayer(e.getPlayer().getUUID());
             if (player == null) {
-                PlayerStorage.makePlayer(event);
-                player = PlayerStorage.getPlayer(event.getUUID());
+                PlayerStorage.makePlayer(e.getPlayer());
+                player = PlayerStorage.getPlayer(e.getPlayer().getUUID());
             }
 
             if (player != null) {
-                player.userName = event.getName().plainCopy().toString();
+                player.userName = e.getPlayer().getName().plainCopy().toString();
                 player.syncWithJobManager();
                 player.updateCache();
             }
@@ -98,15 +87,13 @@ public class EventSubscriptions
         });
     }
 
-    public void subscribeToPlayerLogout()
-    {
-        CobblemonEvents.PLAYER_QUIT.subscribe(Priority.NORMAL, event -> {
-            Player player = PlayerStorage.getPlayer(event.getUUID());
+    public void subscribeToPlayerLogout() {
+        PlatformEvents.SERVER_PLAYER_LOGOUT.subscribe(Priority.NORMAL, e -> {
+            Player player = PlayerStorage.getPlayer(e.getPlayer().getUUID());
             if (player != null) {
                 player.save();
             }
             return Unit.INSTANCE;
         });
-
     }
 }

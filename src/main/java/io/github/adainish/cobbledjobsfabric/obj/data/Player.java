@@ -20,10 +20,12 @@ import io.github.adainish.cobbledjobsfabric.obj.configurabledata.JobType;
 import io.github.adainish.cobbledjobsfabric.storage.PlayerStorage;
 import io.github.adainish.cobbledjobsfabric.util.EconomyUtil;
 import io.github.adainish.cobbledjobsfabric.util.Util;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Items;
 
 import java.util.*;
@@ -227,7 +229,7 @@ public class Player {
             GooeyButton button = GooeyButton.builder()
                     .title(Util.formattedString(configurableJob.prettyName))
                     .lore(Util.formattedArrayList(configurableJob.description))
-                    .display(configurableJob.displayStack.copy())
+                    .display(configurableJob.displayStack)
                     .onClick(b -> {
                         UIManager.openUIForcefully(b.getPlayer(), selectOptionMenu(configurableJob));
                     })
@@ -264,9 +266,9 @@ public class Player {
             ItemStack stack = new ItemStack(Items.DIRT);
             if (PokemonSpecies.INSTANCE.getByIdentifier(location) != null)
             {
-                stack = Util.returnIcon(PokemonSpecies.INSTANCE.getByIdentifier(location).create(1));
+                stack = Util.returnIcon(Objects.requireNonNull(PokemonSpecies.INSTANCE.getByIdentifier(location)).create(1));
             } else {
-                stack = new ItemStack(Registry.ITEM.get(location));
+                stack = new ItemStack(BuiltInRegistries.ITEM.get(location));
             }
             if (stack.isEmpty())
                 continue;

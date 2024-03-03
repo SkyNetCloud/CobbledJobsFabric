@@ -2,8 +2,7 @@ package io.github.adainish.cobbledjobsfabric.obj.data;
 
 import io.github.adainish.cobbledjobsfabric.CobbledJobsFabric;
 import io.github.adainish.cobbledjobsfabric.obj.configurabledata.ConfigurableJob;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 
 public class Job

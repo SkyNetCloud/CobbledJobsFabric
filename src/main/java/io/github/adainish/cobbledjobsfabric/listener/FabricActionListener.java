@@ -1,18 +1,16 @@
 package io.github.adainish.cobbledjobsfabric.listener;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import dev.architectury.event.Event;
 import dev.architectury.event.events.common.PlayerEvent;
 import io.github.adainish.cobbledjobsfabric.enumerations.JobAction;
 import io.github.adainish.cobbledjobsfabric.obj.data.Player;
 import io.github.adainish.cobbledjobsfabric.storage.PlayerStorage;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.minecraft.core.Registry;
+
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.projectile.FishingHook;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 public class FabricActionListener
@@ -41,7 +39,7 @@ public class FabricActionListener
 //                if (player != null) {
 //                    //update job data for mining
 //
-//                    ResourceLocation location = Registry.ITEM.getKey(constructed.getItem());
+//                    Optional<RegistryKey<Item>> location = BuiltInRegistries.ITEM.getKey(constructed.getItem());
 //                    player.updateJobData(JobAction.Craft, location.toString());
 //                    player.updateCache();
 //                }
@@ -63,8 +61,7 @@ public class FabricActionListener
                 Player player = PlayerStorage.getPlayer(serverPlayer.getUUID());
                 if (player != null) {
                     //update job data for mining
-
-                    ResourceLocation location = Registry.ITEM.getKey(constructed.getItem());
+                    ResourceLocation location = BuiltInRegistries.ITEM.getKey(constructed.getItem());
                     player.updateJobData(JobAction.Craft, location.toString());
                     player.updateCache();
                 }
@@ -86,7 +83,7 @@ public class FabricActionListener
                     //update job data for mining
 
                     Block block = blockEntity.getBlockState().getBlock();
-                    ResourceLocation location = Registry.ITEM.getKey(block.asItem());
+                    ResourceLocation location = BuiltInRegistries.ITEM.getKey(block.asItem());
                     player.updateJobData(JobAction.Mine, location.toString());
                     player.updateCache();
                 }
@@ -113,7 +110,7 @@ public class FabricActionListener
                         {
                             location = ((PokemonEntity) killedEntity).getPokemon().getSpecies().getResourceIdentifier();
                         } else {
-                            location = Registry.ENTITY_TYPE.getKey(entity.getType());
+                            location = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
                         }
                         player.updateJobData(JobAction.Kill, location.toString());
                         player.updateCache();
