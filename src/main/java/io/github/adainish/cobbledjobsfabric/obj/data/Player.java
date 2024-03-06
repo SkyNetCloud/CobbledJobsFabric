@@ -269,7 +269,7 @@ public class Player {
             ResourceLocation location = ResourceLocation.tryParse(actionKey.actionKey);
             if (location == null)
                 continue;
-            ItemStack stack = new ItemStack(Items.DIRT.asItem());
+            ItemStack stack = new ItemStack(Items.PAPER.asItem());
             if (PokemonSpecies.INSTANCE.getByIdentifier(location) != null)
             {
                 stack = Util.returnIcon(Objects.requireNonNull(PokemonSpecies.INSTANCE.getByIdentifier(location)).create(1));

@@ -19,12 +19,13 @@ public class EventSubscriptions {
         subscribeToCapture();
         subscribeToFainting();
         subscribeToEvolving();
+        subscribeToTrade();
     }
 
     public void subscribeToEvolving() {
         CobblemonEvents.EVOLUTION_COMPLETE.subscribe(Priority.NORMAL, event -> {
+            Player player = PlayerStorage.getPlayer(event.component1().getOwnerPlayer().getUUID());
             try {
-                Player player = PlayerStorage.getPlayer(event.component1().getOwnerPlayer().getUUID());
                 if (player != null) {
                     //update job data for evolving
                     player.updateJobData(JobAction.Evolve, event.component1().getSpecies().resourceIdentifier.toString());
@@ -40,13 +41,15 @@ public class EventSubscriptions {
     }
 
     public void subscribeToFainting() {
+        // Doesn't pick up on wild Fainting
         CobblemonEvents.POKEMON_FAINTED.subscribe(Priority.NORMAL, event -> {
+            Player player = PlayerStorage.getPlayer(event.component1().getOwnerUUID());
                 try {
-                    Player player = PlayerStorage.getPlayer(Objects.requireNonNull(event.component1().getOwnerPlayer()).getUUID());
-                    if (player != null && event.getPokemon().isWild()) {
-                        //update job data for killing
-                        player.updateJobData(JobAction.Kill, event.component1().getSpecies().resourceIdentifier.toString());
-                        player.updateCache();
+                    if (player != null) {
+                        if (event.getPokemon().isWild()) {
+                            player.updateJobData(JobAction.Kill, event.component1().getSpecies().resourceIdentifier.toString());
+                            player.updateCache();
+                        }
                     }
                 } catch (Exception e) {
                     return Unit.INSTANCE;
@@ -54,6 +57,20 @@ public class EventSubscriptions {
             return Unit.INSTANCE;
         });
 
+    }
+
+    public void subscribeToTrade() {
+        CobblemonEvents.TRADE_COMPLETED.subscribe(Priority.NORMAL, event -> {
+            Player player = PlayerStorage.getPlayer(event.getTradeParticipant1().getUuid());
+            Player player2 = PlayerStorage.getPlayer(event.getTradeParticipant2().getUuid());
+            if (player != null && player2 != null) {
+                player.updateJobData(JobAction.Trade, event.getTradeParticipant1Pokemon().getSpecies().resourceIdentifier.toString());
+                player2.updateJobData(JobAction.Trade, event.getTradeParticipant2Pokemon().getSpecies().resourceIdentifier.toString());
+                player2.updateCache();
+                player.updateCache();
+            }
+            return Unit.INSTANCE;
+        });
     }
 
     public void subscribeToCapture() {
@@ -67,7 +84,6 @@ public class EventSubscriptions {
             return Unit.INSTANCE;
         });
     }
-
     public void subscribeToPlayerLogin() {
         PlatformEvents.SERVER_PLAYER_LOGIN.subscribe(Priority.NORMAL, e -> {
 

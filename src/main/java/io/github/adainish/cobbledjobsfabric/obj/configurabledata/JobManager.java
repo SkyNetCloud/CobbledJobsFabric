@@ -298,134 +298,6 @@ public class JobManager
                         configurableJob.jobTypes.put(JobAction.Evolve.name().toLowerCase(), secondJobType);
                         break;
                     }
-                    case Fisherman -> {
-                        JobType jobType = new JobType();
-                        jobType.prettyTitle = "&b" + "Fish Items";
-                        JobType secondaryJobType = new JobType();
-                        secondaryJobType.prettyTitle = "&b" + "Fish Pokemon";
-                        //load default action keys
-
-                        //vanilla entities
-                        for (int i = 0; i < 6; i++) {
-                            ActionKey actionKey = new ActionKey();
-                            actionKey.baseExperience = 1;
-                            actionKey.baseWorth = 1;
-                            switch (i)
-                            {
-                                case 0 -> {
-
-                                    ResourceLocation location = ENTITY_TYPE.getKey(EntityType.COD);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 1 -> {
-                                    ResourceLocation location = ENTITY_TYPE.getKey(EntityType.SALMON);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 2 -> {
-                                    ResourceLocation location = ENTITY_TYPE.getKey(EntityType.TROPICAL_FISH);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 3 -> {
-                                    ResourceLocation location = ENTITY_TYPE.getKey(EntityType.FROG);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-                                case 4 -> {
-                                    ResourceLocation location = ENTITY_TYPE.getKey(EntityType.DOLPHIN);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-                                case 5 -> {
-                                    ResourceLocation location = ENTITY_TYPE.getKey(EntityType.PUFFERFISH);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-
-                            }
-                            secondaryJobType.actionKeys.put(actionKey.actionKey, actionKey);
-                        }
-
-                        //load default action keys
-                        //load vanilla fishing action
-                        for (int i = 0; i < 6; i++) {
-                            ActionKey actionKey = new ActionKey();
-                            actionKey.baseExperience = 1;
-                            actionKey.baseWorth = 1;
-                            switch (i)
-                            {
-                                case 0 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.ACACIA_LOG);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 1 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.SALMON);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 2 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.NAUTILUS_SHELL);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 3 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.TROPICAL_FISH);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-                                case 4 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.PUFFERFISH);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-                                case 5 -> {
-                                    ResourceLocation location = ITEM.getKey(Items.COD);
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-
-                            }
-                            jobType.actionKeys.put(actionKey.actionKey, actionKey);
-                        }
-                        //load cobblemon kill water type pokemon as action
-                        for (int i = 0; i < 6; i++) {
-                            ActionKey actionKey = new ActionKey();
-                            actionKey.baseExperience = 1;
-                            actionKey.baseWorth = 1;
-                            switch (i)
-                            {
-                                case 0 -> {
-                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("magikarp").getResourceIdentifier();
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 1 -> {
-                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("gyarados").getResourceIdentifier();
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 2 -> {
-                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("psyduck").getResourceIdentifier();
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                    break;
-                                }
-                                case 3 -> {
-                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("golduck").getResourceIdentifier();
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-                                case 4 -> {
-                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("squirtle").getResourceIdentifier();
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-                                case 5 -> {
-                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("wartortle").getResourceIdentifier();
-                                    actionKey.actionKey = location.toString().toLowerCase();
-                                }
-
-                            }
-                            secondaryJobType.actionKeys.put(actionKey.actionKey, actionKey);
-                        }
-                        configurableJob.jobTypes.put(JobAction.Fish.name().toLowerCase(), jobType);
-                        configurableJob.jobTypes.put(JobAction.Kill.name().toLowerCase(), secondaryJobType);
-                        break;
-                    }
                     case Woodcutter -> {
                         JobType jobType = new JobType();
                         jobType.prettyTitle = "&b" + "Cut Wood";
@@ -468,6 +340,80 @@ public class JobManager
                             jobType.actionKeys.put(actionKey.actionKey, actionKey);
                         }
                         configurableJob.jobTypes.put(JobAction.Mine.name().toLowerCase(), jobType);
+                        break;
+                    }
+                    case Blacksmith -> {
+                        JobType jobType = new JobType();
+                        jobType.prettyTitle = "&e" + "Blacksmith Items";
+                        for (int i = 0; i < 6; i++) {
+                            ActionKey actionKey = new ActionKey();
+                            actionKey.baseExperience = 1;
+                            actionKey.baseWorth = 1;
+                            switch (i)
+                            {
+                                case 0 -> {
+                                    ResourceLocation location = ITEM.getKey(Items.IRON_INGOT);
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                    break;
+                                }
+                                case 1 -> {
+                                    ResourceLocation location = ITEM.getKey(Items.GOLD_INGOT);
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                    break;
+                                }
+                                case 2 -> {
+                                    ResourceLocation location = ITEM.getKey(Items.COPPER_INGOT);
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                    break;
+                                }
+                            }
+                            jobType.actionKeys.put(actionKey.actionKey, actionKey);
+                        }
+                        configurableJob.jobTypes.put(JobAction.Smelt.name().toLowerCase(), jobType);
+                        break;
+                    }
+                    case Trader -> {
+                        JobType jobType = new JobType();
+                        jobType.prettyTitle = "&b" + "Trading Pokemon";
+                        //load default action keys
+                        for (int i = 0; i < 6; i++) {
+                            ActionKey actionKey = new ActionKey();
+                            actionKey.baseExperience = 1;
+                            actionKey.baseWorth = 1;
+                            switch (i)
+                            {
+                                case 0 -> {
+                                    ResourceLocation location = Objects.requireNonNull(PokemonSpecies.INSTANCE.getByName("charmander")).getResourceIdentifier();
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                    break;
+                                }
+                                case 1 -> {
+                                    ResourceLocation location = Objects.requireNonNull(PokemonSpecies.INSTANCE.getByName("charmeleon")).getResourceIdentifier();
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                    break;
+                                }
+                                case 2 -> {
+                                    ResourceLocation location = Objects.requireNonNull(PokemonSpecies.INSTANCE.getByName("charizard")).getResourceIdentifier();
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                    break;
+                                }
+                                case 3 -> {
+                                    ResourceLocation location = Objects.requireNonNull(PokemonSpecies.INSTANCE.getByName("vulpix")).getResourceIdentifier();
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                }
+                                case 4 -> {
+                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("ninetales").getResourceIdentifier();
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                }
+                                case 5 -> {
+                                    ResourceLocation location = PokemonSpecies.INSTANCE.getByName("pikachu").getResourceIdentifier();
+                                    actionKey.actionKey = location.toString().toLowerCase();
+                                }
+
+                            }
+                            jobType.actionKeys.put(actionKey.actionKey, actionKey);
+                        }
+                        configurableJob.jobTypes.put(JobAction.Trade.name().toLowerCase(), jobType);
                         break;
                     }
                 }

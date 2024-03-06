@@ -5,8 +5,9 @@ public enum JobAction
     Undefined,
     Capture,
     Kill,
-    Fish,
     Mine,
     Craft,
-    Evolve
+    Evolve,
+    Smelt,
+    Trade
 }

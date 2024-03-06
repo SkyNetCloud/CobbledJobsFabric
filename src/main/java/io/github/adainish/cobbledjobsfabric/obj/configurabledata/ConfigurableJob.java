@@ -15,9 +15,7 @@ public class ConfigurableJob
 {
     public String id = "";
     public int displayOrder = 0;
-
     public String displayStack = "minecraft:dirt";
-
     public HashMap<String, JobType> jobTypes = new HashMap<>();
     public HashMap<Integer, ConfigurableLevel> levels = new HashMap<>();
 

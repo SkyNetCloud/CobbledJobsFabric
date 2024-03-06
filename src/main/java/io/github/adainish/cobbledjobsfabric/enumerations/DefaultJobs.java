@@ -6,6 +6,7 @@ public enum DefaultJobs
     Miner,
     Woodcutter,
     Hunter,
-    Fisherman,
-    Crafter
+    Crafter,
+    Blacksmith,
+    Trader
 }
